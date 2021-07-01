@@ -1,3 +1,17 @@
+import { createHash } from 'std/hash/mod.ts'
+import { iter } from 'std/io/util.ts'
+
+export async function computeHash(path: string): Promise<string> {
+  const handle = await Deno.open(path)
+  const hash = createHash('sha256')
+
+  for await (const chunk of iter(handle)) {
+    hash.update(chunk)
+  }
+
+  return hash.toString()
+}
+
 export function pickFromArray<T>(arr: T[]): T {
   if (!arr.length) {
     throw new Error('Given array is empty.')

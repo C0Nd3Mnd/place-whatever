@@ -1,7 +1,7 @@
 import { walk } from 'std/fs/mod.ts'
 import { parse, relative } from 'std/path/mod.ts'
 import { config } from '@/lib/config.ts'
-import { computeHash } from '@/lib/computeHash.ts'
+import { computeHash } from '@/lib/util.ts'
 
 export interface Image {
   category: string
