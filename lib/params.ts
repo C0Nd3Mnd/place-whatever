@@ -13,7 +13,7 @@ export function parse(url: string): Params {
     .map(part => part.trim().toLowerCase())
     .filter(part => part !== '')
 
-  const { sizeLimit, defaultSize } = config.images
+  const { sizeLimit, defaultSize } = config.image
 
   const params: Params = {}
 

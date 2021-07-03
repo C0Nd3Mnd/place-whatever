@@ -1,11 +1,14 @@
 import { decode, GIF, Image } from 'imagescript/mod.ts'
 import { parse } from 'std/path/mod.ts'
+import { config } from '@/lib/config.ts'
 
 export async function renderSize(
   originalPath: string,
   newWidth: number,
   newHeight: number
 ): Promise<Uint8Array> {
+  const { pngCompression, jpgQuality } = config.render
+
   const imageBytes = await Deno.readFile(originalPath)
   const originalImage = await decode(imageBytes)
 
@@ -33,8 +36,8 @@ export async function renderSize(
   }
 
   if (parse(originalPath).ext === 'png') {
-    return resized.encode(3)
+    return resized.encode(pngCompression)
   } else {
-    return resized.encodeJPEG(85)
+    return resized.encodeJPEG(jpgQuality)
   }
 }

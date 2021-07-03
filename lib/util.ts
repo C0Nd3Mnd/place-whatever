@@ -9,6 +9,8 @@ export async function computeHash(path: string): Promise<string> {
     hash.update(chunk)
   }
 
+  handle.close()
+
   return hash.toString()
 }
 

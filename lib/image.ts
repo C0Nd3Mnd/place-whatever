@@ -11,11 +11,11 @@ export interface Image {
 
 export const imageList: Image[] = []
 
-for await (const { path } of walk(config.images.basePath, {
+for await (const { path } of walk(config.image.repository, {
   maxDepth: 2,
-  exts: config.images.extensions
+  exts: config.image.extensions
 })) {
-  const { dir } = parse(relative(config.images.basePath, path))
+  const { dir } = parse(relative(config.image.repository, path))
 
   imageList.push({
     category: dir.toLowerCase(),

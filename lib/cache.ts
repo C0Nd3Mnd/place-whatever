@@ -3,8 +3,7 @@ import { Image } from '@/lib/image.ts'
 import { exists } from 'std/fs/mod.ts'
 import { join, parse } from 'std/path/mod.ts'
 import { renderSize } from '@/lib/render.ts'
-
-// config.cache.cachePath
+import { recordCacheHit } from '@/lib/stats.ts'
 
 let initialized = false
 let initializing = false
@@ -16,7 +15,7 @@ async function init() {
 
   initializing = true
 
-  await Deno.mkdir(config.cache.cachePath, { recursive: true })
+  await Deno.mkdir(config.cache.path, { recursive: true })
 
   initializing = false
   initialized = true
@@ -35,7 +34,7 @@ export async function getCached(
 
   console.log(image.hash)
 
-  const imageCacheDir = join(config.cache.cachePath, image.hash)
+  const imageCacheDir = join(config.cache.path, image.hash)
   const filename = `${width}x${height}${parse(image.path).ext}`
 
   if (!(await exists(imageCacheDir))) {
@@ -45,10 +44,15 @@ export async function getCached(
 
   const fullPath = join(imageCacheDir, filename)
 
+  let cacheHit = true
+
   if (!(await exists(fullPath))) {
+    cacheHit = false
     const resizedBytes = await renderSize(image.path, width, height)
     await Deno.writeFile(fullPath, resizedBytes)
   }
+
+  recordCacheHit(cacheHit)
 
   return fullPath
 }
