@@ -40,7 +40,7 @@ export async function getCached(
   const filename = `${width}x${height}${parse(image.path).ext}`
 
   if (!(await exists(imageCacheDir))) {
-    logger.info(
+    logger.log(
       `Cache directory "${imageCacheDir}" does not exist. Creating it now.`
     )
     await Deno.mkdir(imageCacheDir)

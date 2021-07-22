@@ -1,3 +1,5 @@
+import { cyan, yellow, red, gray } from 'std/fmt/colors.ts'
+
 export class Logger {
   constructor(private prefix: string) {}
 
@@ -6,18 +8,18 @@ export class Logger {
   }
 
   public log(...items: any): void {
-    console.log(this.timestamp(), `[${this.prefix}]`, ...items)
+    console.log(gray(`${this.timestamp()} [${this.prefix}]`), ...items)
   }
 
   public info(...items: any): void {
-    console.info(this.timestamp(), `[${this.prefix}]`, ...items)
+    console.info(cyan(`${this.timestamp()} [${this.prefix}]`), ...items)
   }
 
   public warn(...items: any): void {
-    console.warn(this.timestamp(), `[${this.prefix}]`, ...items)
+    console.warn(yellow(`${this.timestamp()} [${this.prefix}]`), ...items)
   }
 
   public error(...items: any): void {
-    console.error(this.timestamp(), `[${this.prefix}]`, ...items)
+    console.error(red(`${this.timestamp()} [${this.prefix}]`), ...items)
   }
 }
