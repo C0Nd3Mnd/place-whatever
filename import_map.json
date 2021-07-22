@@ -1,7 +1,7 @@
 {
   "imports": {
     "@/": "./",
-    "std/": "https://deno.land/std@0.100.0/",
+    "std/": "https://deno.land/std@0.102.0/",
     "imagescript/": "https://deno.land/x/imagescript@1.2.7/"
   }
 }
