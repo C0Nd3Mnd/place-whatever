@@ -1,4 +1,7 @@
 import { config } from '@/lib/config.ts'
+import { Logger } from '@/lib/logger.ts'
+
+const logger = new Logger('stats')
 
 function memoryMegabytes(bytes: number): number {
   return Math.round(bytes / 1024 / 1024)
@@ -7,7 +10,7 @@ function memoryMegabytes(bytes: number): number {
 export function logReport(): void {
   const { heapUsed, heapTotal, external, rss } = Deno.memoryUsage()
 
-  console.log(
+  logger.log(
     'Memory summary:',
     `Heap ${memoryMegabytes(heapUsed)}/${memoryMegabytes(heapTotal)} MB`,
     '-',
@@ -16,7 +19,7 @@ export function logReport(): void {
     `RSS ${memoryMegabytes(rss)} MB`
   )
 
-  console.log(
+  logger.log(
     'Cache health:',
     `Hit rate ${Math.round(calculateCacheHitrate() * 100)}%`,
     `(of ${cacheHits.length} requests)`

@@ -1,5 +1,8 @@
 import { createHash } from 'std/hash/mod.ts'
 import { iter } from 'std/io/util.ts'
+import { Logger } from '@/lib/logger.ts'
+
+const logger = new Logger('util')
 
 export function wait(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -16,7 +19,7 @@ export async function getReadHandle(
   try {
     return await Deno.open(path, { read: true })
   } catch (ex) {
-    console.warn(
+    logger.warn(
       `File "${path}" cannot be accessed.`,
       `Trying again in 5 seconds (remaining tries: ${tries}).`,
       ex
@@ -60,4 +63,16 @@ export function random(min: number, max: number): number {
     value = bytes.reduce((acc, x, n) => acc + x * 256 ** n, 0)
   } while (value >= cutoff)
   return min + value % range
+}
+
+export class Performance {
+  private start: number
+
+  constructor() {
+    this.start = performance.now()
+  }
+
+  getFormatted() {
+    return `${Math.floor(performance.now() - this.start)}ms`
+  }
 }

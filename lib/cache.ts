@@ -4,6 +4,10 @@ import { exists } from 'std/fs/mod.ts'
 import { join, parse } from 'std/path/mod.ts'
 import { renderSize } from '@/lib/render.ts'
 import { recordCacheHit } from '@/lib/stats.ts'
+import { Logger } from '@/lib/logger.ts'
+import { Performance } from '@/lib/util.ts'
+
+const logger = new Logger('cache')
 
 let initialized = false
 let initializing = false
@@ -32,13 +36,13 @@ export async function getCached(
     throw new Error('Image has no hash!')
   }
 
-  console.log(image.hash)
-
   const imageCacheDir = join(config.cache.path, image.hash)
   const filename = `${width}x${height}${parse(image.path).ext}`
 
   if (!(await exists(imageCacheDir))) {
-    console.log(imageCacheDir)
+    logger.info(
+      `Cache directory "${imageCacheDir}" does not exist. Creating it now.`
+    )
     await Deno.mkdir(imageCacheDir)
   }
 
@@ -46,10 +50,18 @@ export async function getCached(
 
   let cacheHit = true
 
-  if (!(await exists(fullPath))) {
+  if (await exists(fullPath)) {
+    logger.log(
+      `Using cached version for image ${image.hash}@${width}x${height}`
+    )
+  } else {
     cacheHit = false
+    const perf = new Performance()
     const resizedBytes = await renderSize(image.path, width, height)
     await Deno.writeFile(fullPath, resizedBytes)
+    logger.log(
+      `Generated ${image.hash}@${width}x${height}} in ${perf.getFormatted()}`
+    )
   }
 
   recordCacheHit(cacheHit)

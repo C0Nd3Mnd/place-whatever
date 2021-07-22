@@ -5,6 +5,9 @@ import { imageList } from '@/lib/image.ts'
 import { pickFromArray } from '@/lib/util.ts'
 import { parse, Params } from '@/lib/params.ts'
 import { getCached } from '@/lib/cache.ts'
+import { Logger } from '@/lib/logger.ts'
+
+const logger = new Logger('web')
 
 async function respondSafe(req: ServerRequest, res: Response): Promise<void> {
   try {
@@ -12,7 +15,7 @@ async function respondSafe(req: ServerRequest, res: Response): Promise<void> {
   } catch (ex) {
     if (ex instanceof Deno.errors.ConnectionAborted) {
       // We can ignore this error.
-      return console.warn('ConnectionAborted throw prevented.')
+      return logger.warn('ConnectionAborted throw prevented.')
     }
 
     throw ex

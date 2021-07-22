@@ -1,7 +1,10 @@
 import { walk } from 'std/fs/mod.ts'
-import { parse, relative, join } from 'std/path/mod.ts'
+import { parse, relative } from 'std/path/mod.ts'
 import { config } from '@/lib/config.ts'
 import { computeHash } from '@/lib/util.ts'
+import { Logger } from '@/lib/logger.ts'
+
+const logger = new Logger('image')
 
 export interface Image {
   category: string
@@ -13,7 +16,7 @@ export const imageList: Image[] = []
 
 async function addToImageList(category: string, path: string): Promise<void> {
   if (imageList.find(image => image.path === path)) {
-    return console.warn(`Skipping already added image "${path}".`)
+    return logger.warn(`Skipping already added image "${path}".`)
   }
 
   try {
@@ -22,8 +25,10 @@ async function addToImageList(category: string, path: string): Promise<void> {
       path,
       hash: await computeHash(path)
     })
+
+    logger.log(`Added image "${path}".`)
   } catch (ex) {
-    console.warn(`Error trying to add image "${path}. Skipping."`, ex)
+    logger.warn(`Error trying to add image "${path}. Skipping."`, ex)
   }
 }
 
@@ -36,7 +41,7 @@ function removeFromImageList(path: string): void {
 
   imageList.splice(imageList.indexOf(image), 1)
 
-  console.log(`Removed image "${path}".`)
+  logger.log(`Removed image "${path}".`)
 }
 
 for await (const { path } of walk(config.image.repository, {

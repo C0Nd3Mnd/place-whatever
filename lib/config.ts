@@ -70,7 +70,7 @@ export const config = {
     /**
      * Periodic logging interval in ms.
      */
-    interval: 10000,
+    interval: 60000,
     /**
      * Amount of requests the cache hit rate is based upon.
      */
