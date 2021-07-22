@@ -1,8 +1,35 @@
 import { createHash } from 'std/hash/mod.ts'
 import { iter } from 'std/io/util.ts'
 
+export function wait(ms: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}
+
+export async function getReadHandle(
+  path: string,
+  tries = 10
+): Promise<Deno.File> {
+  try {
+    return await Deno.open(path, { read: true })
+  } catch (ex) {
+    console.warn(
+      `File "${path}" cannot be accessed.`,
+      `Trying again in 5 seconds (remaining tries: ${tries}).`,
+      ex
+    )
+
+    await wait(5000)
+
+    return getReadHandle(path, tries - 1)
+  }
+}
+
 export async function computeHash(path: string): Promise<string> {
-  const handle = await Deno.open(path)
+  const handle = await getReadHandle(path)
   const hash = createHash('sha256')
 
   for await (const chunk of iter(handle)) {
