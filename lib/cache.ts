@@ -57,10 +57,11 @@ export async function getCached(
   } else {
     cacheHit = false
     const perf = new Performance()
+    logger.log(`Generating ${image.hash}@${width}x${height}.`)
     const resizedBytes = await renderSize(image.path, width, height)
     await Deno.writeFile(fullPath, resizedBytes)
     logger.log(
-      `Generated ${image.hash}@${width}x${height}} in ${perf.getFormatted()}`
+      `Generated ${image.hash}@${width}x${height} in ${perf.getFormatted()}`
     )
   }
 
